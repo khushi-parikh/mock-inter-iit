@@ -1,0 +1,42 @@
+/* .App {
+    font-family: sans-serif;
+    padding: 20px;
+} */
+
+.VideoInput {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+    margin: auto;
+    padding: 10px;
+}
+
+.VideoInput_input {
+    display: none;
+    border-bottom: 2px solid black;
+}
+
+.VideoInput_video {
+    display: block;
+    margin-top: 0;
+    padding-top: 10px;
+    height: 300px;
+}
+
+.VideoInput_image {
+    display: block;
+    margin: 0;
+    padding-top: 10px;
+    height: 300px;
+}
+
+.VideoInput_footer {
+    background: #eee;
+    width: 100%;
+    min-height: 40px;
+    line-height: 40px;
+    text-align: center;
+}
