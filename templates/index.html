@@ -1,17 +1,48 @@
+<html>
+  <head>
+    <title>Live Streaming Demonstration</title>
+    <style>
+      .outer-container {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100vw;
+      }
+      #container {
+        position: relative;
+        width: 500px;
+        height: 375px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .video {
+        position: relative;
+        width: 500px;
+        height: 375px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvasOutput"></canvas>
+    <div class="outer-container">
+      <div id="container">
+        browser
 
-<canvas id="canvasOutput" ></canvas>
-<div class="outer-container">
-<div id="container">
-  
-  <video autoplay="true" id="videoElement"></video>
-</div>
-
-<div class="video">
-  <img id="image" />
-</div>
-
-
-</div>
+        <video autoplay="true" id="videoElement"></video>
+      </div>
+      <div class="video">
+        server
+        <img id="image" />
+      </div>
+    </div>
+  </body>
+</html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 <script
@@ -28,11 +59,13 @@
 
   const video = document.querySelector("#videoElement");
 
-  video.width = 500;
-  video.height = 375;
+  video.width = 400;
+  video.height = 200;
   var canvas = document.getElementById("canvasOutput");
   var context = canvas.getContext("2d");
   const image_id = document.getElementById("image");
+  canvas.width = video.width;
+  canvas.height = video.height;
 
   if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices
@@ -53,11 +86,12 @@
 
   setInterval(() => {
     var type = "image/png";
-    context.drawImage(video, 0, 0, width, height);
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
     var data = canvas.toDataURL(type);
     context.clearRect(0, 0, width, height);
 
     data = data.replace("data:" + type + ";base64,", "");
+
     socket.emit("image", data);
   }, 1000 / FPS);
 
@@ -65,6 +99,3 @@
     image_id.src = image;
   });
 </script>
-
-
-
