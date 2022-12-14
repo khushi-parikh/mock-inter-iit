@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "../styles/selector.css";
 
-const Selector = ({ buttons, doSomethingAfterClick }) => {
-    const [clickedId, setClickedId] = useState(-1);
+function Selector ({ buttons, doSomethingAfterClick }){
+    const [clickedId, setClickedId] = useState(0);
   
     const handleClick = (event, id) => {
       setClickedId(id);
