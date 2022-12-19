@@ -28,7 +28,7 @@ function Upload(){
 			console.log(err);
 		});
 		setSource(url);
-		document.location.reload();
+		// document.location.reload();
 		// img.innerHTML = "<img src = 'http://localhost:5000/savedvideo/video_feed' alt = '' class='VideoInput_image'  />";
 		// console.log(event.target.files[0]);
 		// console.log(URL.createObjectURL(event.target.files[0]));
