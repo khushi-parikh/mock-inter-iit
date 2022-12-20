@@ -35,6 +35,11 @@ def upload_file():
     # video_feed()
     return "done"
 
+@socketio.on('connect')
+def on_connect():
+    print('Client connected')
+
+
 @app.route('/download', methods = ['GET'])
 def download_file():
     video_capture = cv2.VideoCapture(secure_filename(file.filename))
@@ -59,7 +64,6 @@ def download_file():
     sleep(1)
     return send_file('output.avi', as_attachment=True)
 
-
 @app.route('/', methods=['POST', 'GET'])
 def index():
     return render_template('index.html')
@@ -70,6 +74,7 @@ def savedvideo():
 
 def gen():
     video_capture = cv2.VideoCapture(secure_filename(file.filename))
+    human_cascade= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
     print(secure_filename(file.filename))
     flag2 = flag
     while True:
@@ -78,6 +83,10 @@ def gen():
         try:
             ret, frame = video_capture.read()
             out = simplest_cb(frame, 1)
+            gray=cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+            humans = human_cascade.detectMultiScale(gray, 1.1, 3)
+            for (x,y,w,h) in humans:
+                cv2.rectangle(out,(x,y),(x+w,y+h),(255,0,0),2)
             combined_frame = cv2.vconcat([frame, out])
             frame = cv2.imencode('.jpg', combined_frame)[1].tobytes()
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
@@ -88,15 +97,18 @@ def gen():
 def video_feed():
     return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
-
 def genremote(url):
     print(url)
     video_capture = cv2.VideoCapture(url)
+    human_cascade= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
     while True:
         try:
             ret, frame = video_capture.read()
             out = simplest_cb(frame, 1)
+            gray=cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+            humans = human_cascade.detectMultiScale(gray, 1.1, 3)
+            for (x,y,w,h) in humans:
+                cv2.rectangle(out,(x,y),(x+w,y+h),(255,0,0),2)
             combined_frame = cv2.vconcat([frame, out])
             frame = cv2.imencode('.jpg', combined_frame)[1].tobytes()
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
@@ -118,11 +130,16 @@ def videofeedremote():
 
 def gendevice():
     video_capture = cv2.VideoCapture(0)
+    human_cascade= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
     while True:
         
         try:
             ret, frame = video_capture.read()
             out = simplest_cb(frame, 1)
+            gray=cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+            humans = human_cascade.detectMultiScale(gray, 1.1, 3)
+            for (x,y,w,h) in humans:
+                cv2.rectangle(out,(x,y),(x+w,y+h),(255,0,0),2)
             combined_frame = cv2.vconcat([frame, out])
             frame = cv2.imencode('.jpg', combined_frame)[1].tobytes()
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
@@ -134,10 +151,9 @@ def videofeeddevice():
     return Response(gendevice(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-
-
 @socketio.on('image')
 def image(data_image):
+    human_cascade= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
     sbuf = StringIO()
     sbuf.write(data_image)
     b = io.BytesIO(base64.b64decode(data_image))
@@ -146,11 +162,15 @@ def image(data_image):
     frame = cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
     frame = imutils.resize(frame, width=500, height=375)
     output = simplest_cb(frame, 1)
+    gray=cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+    humans = human_cascade.detectMultiScale(gray, 1.1, 3)
+    for (x,y,w,h) in humans:
+        cv2.rectangle(out,(x,y),(x+w,y+h),(255,0,0),2)
     imgencode = cv2.imencode('.jpg', output)[1]
     stringData = base64.b64encode(imgencode).decode('utf-8')
     b64_src = 'data:image/jpg;base64,'
     stringData = b64_src + stringData
-    emit('response_back', stringData)
+    emit('response_back', stringData,room=request.sid)
 
 if __name__ == '__main__':
     socketio.run(app, host='127.0.0.1',debug=True)
