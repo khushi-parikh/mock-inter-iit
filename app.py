@@ -24,6 +24,10 @@ def index():
 def savedvideo():
      return render_template('savedvideo.html')
 
+@socketio.on('connect')
+def on_connect():
+    print('Client connected')
+
 def gen(filename):
     video_capture = cv2.VideoCapture(filename)
     human_cascade= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
@@ -32,7 +36,6 @@ def gen(filename):
         out = simplest_cb(frame, 1)
         gray=cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
         humans = human_cascade.detectMultiScale(gray, 1.1, 3)
-
         for (x,y,w,h) in humans:
             cv2.rectangle(out,(x,y),(x+w,y+h),(255,0,0),2)
 
@@ -95,7 +98,8 @@ def image(data_image):
     stringData = base64.b64encode(imgencode).decode('utf-8')
     b64_src = 'data:image/jpg;base64,'
     stringData = b64_src + stringData
-    emit('response_back', stringData)
+    print("emitted to",request.sid)
+    emit('response_back', stringData,room=request.sid)
 
 if __name__ == '__main__':
     socketio.run(app, host='127.0.0.1')
