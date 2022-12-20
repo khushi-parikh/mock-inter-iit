@@ -4,7 +4,7 @@ import axios from "axios";
 const Remote = () => {
   const [state, setstate] = useState({
     originalfeed: "",
-    fianlfeed: "",
+    finalfeed: "",
     url: "",
   });
 
@@ -28,7 +28,7 @@ const Remote = () => {
       .then((res) => {
         console.log(res);
         setstate({
-          fianlfeed: "http://localhost:5000/showremote",
+          finalfeed: "http://localhost:5000/showremote",
         });
       })
       .catch((err) => {
@@ -60,7 +60,7 @@ const Remote = () => {
           margin: "1.5rem",
         }}
       >
-        <img alt="" style={{ width: "30%" }} src={state.fianlfeed}></img>
+        <img alt="" style={{ width: "30%" }} src={state.finalfeed}></img>
       </div>
     </div>
   );
