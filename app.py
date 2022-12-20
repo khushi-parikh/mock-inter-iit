@@ -13,7 +13,8 @@ import numpy as np
 import imutils
 from dehazevideo import simplest_cb
 from engineio.payload import Payload
-from flask import request
+from flask import request, send_file
+from time import sleep
 
 Payload.max_decode_packets = 500
 app = Flask(__name__)
@@ -33,9 +34,35 @@ def upload_file():
     print(file.filename)
     # video_feed()
     return "done"
+
 @socketio.on('connect')
 def on_connect():
     print('Client connected')
+
+
+@app.route('/download', methods = ['GET'])
+def download_file():
+    video_capture = cv2.VideoCapture(secure_filename(file.filename))
+    print(secure_filename(file.filename))
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    save = cv2.VideoWriter('output.avi',fourcc, 20.0, (int(video_capture.get(3)),int(video_capture.get(4))))
+    while(video_capture.isOpened()):
+        try:
+            ret, frame = video_capture.read()
+            if(ret==False):
+                break
+            out = simplest_cb(frame, 1)
+            save.write(out)
+            key=cv2.waitKey(1)
+            if key==27:
+                break
+        except:
+            break
+    video_capture.release()
+    save.release()
+    cv2.destroyAllWindows()
+    sleep(1)
+    return send_file('output.avi', as_attachment=True)
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
