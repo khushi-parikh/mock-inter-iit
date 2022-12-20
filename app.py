@@ -162,10 +162,10 @@ def image(data_image):
     frame = cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
     frame = imutils.resize(frame, width=500, height=375)
     output = simplest_cb(frame, 1)
-    gray=cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+    gray=cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
     humans = human_cascade.detectMultiScale(gray, 1.1, 3)
     for (x,y,w,h) in humans:
-        cv2.rectangle(out,(x,y),(x+w,y+h),(255,0,0),2)
+        cv2.rectangle(output,(x,y),(x+w,y+h),(255,0,0),2)
     imgencode = cv2.imencode('.jpg', output)[1]
     stringData = base64.b64encode(imgencode).decode('utf-8')
     b64_src = 'data:image/jpg;base64,'
