@@ -1,0 +1,24 @@
+.footer{
+    background-color: black;
+    margin-top: 20px;
+    color: white;
+}
+
+.footer-container{
+    text-align: center;
+}
+
+.footer-title{
+    padding-top: 10px;
+}
+
+.person{
+    font-size: 20px;
+    display: inline-block;
+    padding: 10px 30px;
+}
+
+.person a{
+    color: white;
+    /* padding-left: 5px; */
+}

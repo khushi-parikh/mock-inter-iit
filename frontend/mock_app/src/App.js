@@ -6,6 +6,7 @@ import Upload from "./components/button-upload";
 import Remote from "./components/button-remote";
 import Device from "./components/button-device";
 import Landing from "./components/landing";
+import Footer from "./components/footer";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
       {selectedButton==="Upload Photo/Video" && <Upload />}
       {selectedButton==="Use Remote Device" && <Remote />}
       {selectedButton==="Use Device Camera" && <Device />}
+      <Footer />
     </div>
   );
 }

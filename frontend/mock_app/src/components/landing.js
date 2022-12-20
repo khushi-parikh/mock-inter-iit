@@ -6,7 +6,7 @@ const Landing = () => (
     <div className="left_side">
         <h1>Dehazing</h1>
         <h3>One tool to see through tough hazy times!</h3>
-        <p>With just a click you can remove the dusty winds and windy blurs from an image, video or live stream and increase <b>visibility</b></p>
+        <p>With just a click you can remove the dusty winds and windy blurs from an image, video or live stream and increase <b>visibility</b>.</p>
     </div>
 
     <div className="right_side">
