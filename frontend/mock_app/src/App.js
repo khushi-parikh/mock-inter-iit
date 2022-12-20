@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import './App.css';
 import Navbar from './components/navbar';
 import Selector from "./components/selector";
 import Upload from "./components/button-upload";
 import Remote from "./components/button-remote";
 import Device from "./components/button-device";
+import Landing from "./components/landing";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
   return (
     <div className="App">
       <Navbar/>
+      <Landing/>
       <Selector
         buttons={["Upload Photo/Video", "Use Remote Device", "Use Device Camera"]}
         doSomethingAfterClick={printButtonLabel}
