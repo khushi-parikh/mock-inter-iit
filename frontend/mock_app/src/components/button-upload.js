@@ -41,7 +41,7 @@ function Upload(){
 				onChange={handleFileChange}
 				accept=".mov,.mp4,.jpg,.png"
 			/>
-			<button onClick={handleChoose}>Choose</button>
+			<button className="choose_button" onClick={handleChoose}>Choose</button>
 			{/* {
 				source && (ext=="video/mp4" || ext=="video/quicktime") && (
 					<video
