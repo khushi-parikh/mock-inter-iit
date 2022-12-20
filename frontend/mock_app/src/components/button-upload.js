@@ -66,6 +66,7 @@ function Upload(){
 			} */}
 			<div id="img">
 				{source && <Video></Video>}
+				{source &&  <button> <a href="http://localhost:5000/download">Download Video</a> </button> }
 			</div>
 			
 			{/* <div className="VideoInput_footer">{source || "Nothing selected"}</div> */}
