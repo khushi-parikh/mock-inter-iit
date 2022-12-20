@@ -1,7 +1,7 @@
 import base64
 from io import StringIO
 import io
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response,jsonify
 from tkinter import Image
 import cv2
 from flask_socketio import SocketIO, emit
@@ -63,6 +63,54 @@ def gen():
 def video_feed():
     return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
+
+def genremote(url):
+    print(url)
+    video_capture = cv2.VideoCapture(url)
+    while True:
+        try:
+            ret, frame = video_capture.read()
+            out = simplest_cb(frame, 1)
+            combined_frame = cv2.vconcat([frame, out])
+            frame = cv2.imencode('.jpg', combined_frame)[1].tobytes()
+            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        except:
+            return
+url=""
+@app.route('/remote', methods=['POST'])
+def video_feedremote():
+    global url
+    url=request.form.get('url')
+    return "done"
+
+
+@app.route('/showremote', methods=['GET'])
+def videofeedremote():
+    return Response(genremote(url), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+
+def gendevice():
+    video_capture = cv2.VideoCapture(0)
+    while True:
+        
+        try:
+            ret, frame = video_capture.read()
+            out = simplest_cb(frame, 1)
+            combined_frame = cv2.vconcat([frame, out])
+            frame = cv2.imencode('.jpg', combined_frame)[1].tobytes()
+            yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        except:
+            return
+
+@app.route('/showvideodevice', methods=['GET'])
+def videofeeddevice():
+    return Response(gendevice(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+
+
 @socketio.on('image')
 def image(data_image):
     sbuf = StringIO()
@@ -80,5 +128,5 @@ def image(data_image):
     emit('response_back', stringData)
 
 if __name__ == '__main__':
-    socketio.run(app, host='127.0.0.1')
+    socketio.run(app, host='127.0.0.1',debug=True)
 
