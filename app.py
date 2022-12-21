@@ -39,6 +39,7 @@ def upload_file():
 def on_connect():
     print('Client connected')
 
+
 @app.route('/download', methods = ['GET'])
 def download_file():
     file = request.args.get('file')
@@ -96,6 +97,14 @@ def gen(file):
 @app.route('/savedvideo/video_feed')
 def video_feed():
     file = request.args.get('file')
+    type = file.split('.')[-1]
+    if(type=='jpg' or type=='png' or type=='jpeg'):
+        img = cv2.imread(file)
+        out = simplest_cb(img, 1)
+        combined_frame = cv2.vconcat([img, out])
+        frame = cv2.imencode('.jpg', combined_frame)[1]
+        return send_file(io.BytesIO(frame), mimetype='image/jpeg')
+        
     return Response(gen(file), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def genremote(url):
@@ -122,10 +131,13 @@ def video_feedremote():
     url=request.form.get('url')
     return url
 
+
 @app.route('/showremote', methods=['GET'])
 def videofeedremote():
     url = request.args.get('url')
     return Response(genremote(url), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
 
 def gendevice():
     video_capture = cv2.VideoCapture(0)
@@ -148,7 +160,7 @@ def gendevice():
 @app.route('/showvideodevice', methods=['GET'])
 def videofeeddevice():
     return Response(gendevice(), mimetype='multipart/x-mixed-replace; boundary=frame')
-    
+
 @socketio.on('image')
 def image(data_image):
     human_cascade= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
