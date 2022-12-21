@@ -39,7 +39,6 @@ def upload_file():
 def on_connect():
     print('Client connected')
 
-
 @app.route('/download', methods = ['GET'])
 def download_file():
     video_capture = cv2.VideoCapture(secure_filename(file.filename))
@@ -121,12 +120,9 @@ def video_feedremote():
     url=request.form.get('url')
     return "done"
 
-
 @app.route('/showremote', methods=['GET'])
 def videofeedremote():
     return Response(genremote(url), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
 
 def gendevice():
     video_capture = cv2.VideoCapture(0)
@@ -149,8 +145,7 @@ def gendevice():
 @app.route('/showvideodevice', methods=['GET'])
 def videofeeddevice():
     return Response(gendevice(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
+    
 @socketio.on('image')
 def image(data_image):
     human_cascade= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
