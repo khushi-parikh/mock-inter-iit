@@ -116,16 +116,17 @@ def genremote(url):
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
         except:
             return
-url=""
+# url=""
 @app.route('/remote', methods=['POST'])
 def video_feedremote():
-    global url
+    # global url
     url=request.form.get('url')
-    return "done"
+    return url
 
 
 @app.route('/showremote', methods=['GET'])
 def videofeedremote():
+    url = request.args.get('url')
     return Response(genremote(url), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 

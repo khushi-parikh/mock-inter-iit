@@ -27,8 +27,9 @@ const Remote = () => {
       })
       .then((res) => {
         console.log(res);
+        var resUrl = res.data;
         setstate({
-          finalfeed: "http://localhost:5000/showremote",
+          finalfeed: "http://localhost:5000/showremote?url=" + resUrl,
         });
       })
       .catch((err) => {
