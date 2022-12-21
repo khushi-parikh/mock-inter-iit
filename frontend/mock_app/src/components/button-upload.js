@@ -12,20 +12,25 @@ function Upload(){
 
 	const handleFileChange = (event) => {
 		const file = event.target.files[0];
-		const url = URL.createObjectURL(file);
+		var url = URL.createObjectURL(file);
 		var img = document.getElementById("img");
-		setExt(event.target.files[0].type);
+		
 		var formData = new FormData();
 		formData.append("file", file);
-		setSource(url);
+		// setSource(url);
 		axios.post("http://localhost:5000/upload", formData, {
 			headers: {	"Content-Type": "multipart/form-data"	}
 		}).then((res) => {
-			console.log(res);
+			url = res.data;
 		}).catch((err) => {
 			console.log(err);
 		});
-		setSource(url);
+		setTimeout(function(){
+			setSource(url);
+			setExt(event.target.files[0].type);
+		}, 1000);
+		// setExt(event.target.files[0].type);
+		// setSource(url);
 	};
 
 	const handleChoose = (event) => {
@@ -65,8 +70,8 @@ function Upload(){
 				)
 			} */}
 			<div id="img">
-				{source && <Video></Video>}
-				{source &&  <button className="download_button"><a href="http://localhost:5000/download">Download Video</a> </button> }
+				{source && <Video file = {source}></Video>}
+				{source &&  <button className="download_button"><a href={`http://localhost:5000/download?file=${source}`}>Download Video</a> </button> }
 			</div>
 			
 			{/* <div className="VideoInput_footer">{source || "Nothing selected"}</div> */}

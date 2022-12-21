@@ -21,11 +21,11 @@ app = Flask(__name__)
 socketio = SocketIO(app,cors_allowed_origins="*")
 CORS(app)
 
-file = None
+# file = None
 flag = False
 @app.route('/upload', methods = ['POST','GET'])
 def upload_file():
-    global file
+    # global file
     global flag
     file = request.files['file']
     file.save(secure_filename(file.filename))
@@ -33,7 +33,7 @@ def upload_file():
     # return Response(gen(file.filename), mimetype='multipart/x-mixed-replace; boundary=frame')
     print(file.filename)
     # video_feed()
-    return "done"
+    return file.filename
 
 @socketio.on('connect')
 def on_connect():
@@ -42,8 +42,9 @@ def on_connect():
 
 @app.route('/download', methods = ['GET'])
 def download_file():
-    video_capture = cv2.VideoCapture(secure_filename(file.filename))
-    print(secure_filename(file.filename))
+    file = request.args.get('file')
+    video_capture = cv2.VideoCapture(file)
+    print(secure_filename(file))
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     save = cv2.VideoWriter('output.avi',fourcc, 20.0, (int(video_capture.get(3)),int(video_capture.get(4))))
     while(video_capture.isOpened()):
@@ -72,14 +73,14 @@ def index():
 def savedvideo():
      return render_template('savedvideo.html')
 
-def gen():
-    video_capture = cv2.VideoCapture(secure_filename(file.filename))
+def gen(file):
+    video_capture = cv2.VideoCapture(secure_filename(file))
     human_cascade= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
-    print(secure_filename(file.filename))
+    print(secure_filename(file))
     flag2 = flag
     while True:
-        if(flag2!=flag):
-            return
+        # if(flag2!=flag):
+        #     return
         try:
             ret, frame = video_capture.read()
             out = simplest_cb(frame, 1)
@@ -95,7 +96,8 @@ def gen():
 
 @app.route('/savedvideo/video_feed')
 def video_feed():
-    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    file = request.args.get('file')
+    return Response(gen(file), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def genremote(url):
     print(url)
