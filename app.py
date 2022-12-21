@@ -98,9 +98,14 @@ def gen(file):
 def video_feed():
     file = request.args.get('file')
     type = file.split('.')[-1]
+    human_cascade= cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fullbody.xml')
     if(type=='jpg' or type=='png' or type=='jpeg'):
         img = cv2.imread(file)
         out = simplest_cb(img, 1)
+        gray=cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
+        humans = human_cascade.detectMultiScale(gray, 1.1, 3)
+        for (x,y,w,h) in humans:
+            cv2.rectangle(out,(x,y),(x+w,y+h),(255,0,0),2)
         combined_frame = cv2.vconcat([img, out])
         frame = cv2.imencode('.jpg', combined_frame)[1]
         return send_file(io.BytesIO(frame), mimetype='image/jpeg')
